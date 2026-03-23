@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MERN Interview Warm-Up — Azad V T</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #334155;
+      --border: #475569;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent-intro: #a78bfa;
+      --accent-hr: #f472b6;
+      --accent-js: #facc15;
+      --accent-node: #22c55e;
+      --accent-express: #3b82f6;
+      --accent-mongo: #10b981;
+      --accent-trick: #f43f5e;
+      --code-bg: #0d1117;
+      --code-text: #c9d1d9;
+      --keyword: #ff7b72;
+      --string: #a5d6ff;
+      --comment: #8b949e;
+      --func: #d2a8ff;
+      --number: #79c0ff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 0;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e1b4b 100%);
+      padding: 60px 40px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at 30% 50%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 50%, rgba(16,185,129,0.08) 0%, transparent 50%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    .hero h1 {
+      font-size: 2.8em;
+      font-weight: 800;
+      background: linear-gradient(135deg, #60a5fa, #34d399, #facc15);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .hero p { color: var(--text-muted); font-size: 1.15em; position: relative; }
+
+    .hero .date {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 6px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.9em;
+      color: var(--text-muted);
+      position: relative;
+    }
+
+    .toc {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .toc h2 { font-size: 1.4em; margin-bottom: 20px; color: var(--text); }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+    }
+
+    .toc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .toc-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .toc-card .count { font-size: 1.8em; font-weight: 800; }
+    .toc-card .label { color: var(--text-muted); font-size: 0.85em; }
+
+    .toc-card.intro .count { color: var(--accent-intro); }
+    .toc-card.hr .count { color: var(--accent-hr); }
+    .toc-card.js .count { color: var(--accent-js); }
+    .toc-card.node .count { color: var(--accent-node); }
+    .toc-card.express .count { color: var(--accent-express); }
+    .toc-card.mongo .count { color: var(--accent-mongo); }
+    .toc-card.trick .count { color: var(--accent-trick); }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .section-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 20px 0;
+      margin-top: 50px;
+      margin-bottom: 25px;
+      border-bottom: 2px solid;
+      background: var(--bg);
+    }
+
+    .section-header h2 {
+      font-size: 1.8em;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-header .badge {
+      font-size: 0.45em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Section color themes */
+    .section-intro .section-header { border-color: var(--accent-intro); }
+    .section-intro .section-header h2 { color: var(--accent-intro); }
+    .section-intro .badge { background: rgba(167,139,250,0.15); color: var(--accent-intro); }
+    .section-intro .qa-card { border-left-color: var(--accent-intro); }
+    .section-intro .q-num { background: var(--accent-intro); color: #000; }
+
+    .section-hr .section-header { border-color: var(--accent-hr); }
+    .section-hr .section-header h2 { color: var(--accent-hr); }
+    .section-hr .badge { background: rgba(244,114,182,0.15); color: var(--accent-hr); }
+    .section-hr .qa-card { border-left-color: var(--accent-hr); }
+    .section-hr .q-num { background: var(--accent-hr); color: #000; }
+
+    .section-js .section-header { border-color: var(--accent-js); }
+    .section-js .section-header h2 { color: var(--accent-js); }
+    .section-js .badge { background: rgba(250,204,21,0.15); color: var(--accent-js); }
+    .section-js .qa-card { border-left-color: var(--accent-js); }
+    .section-js .q-num { background: var(--accent-js); color: #000; }
+
+    .section-node .section-header { border-color: var(--accent-node); }
+    .section-node .section-header h2 { color: var(--accent-node); }
+    .section-node .badge { background: rgba(34,197,94,0.15); color: var(--accent-node); }
+    .section-node .qa-card { border-left-color: var(--accent-node); }
+    .section-node .q-num { background: var(--accent-node); color: #000; }
+
+    .section-express .section-header { border-color: var(--accent-express); }
+    .section-express .section-header h2 { color: var(--accent-express); }
+    .section-express .badge { background: rgba(59,130,246,0.15); color: var(--accent-express); }
+    .section-express .qa-card { border-left-color: var(--accent-express); }
+    .section-express .q-num { background: var(--accent-express); color: #fff; }
+
+    .section-mongo .section-header { border-color: var(--accent-mongo); }
+    .section-mongo .section-header h2 { color: var(--accent-mongo); }
+    .section-mongo .badge { background: rgba(16,185,129,0.15); color: var(--accent-mongo); }
+    .section-mongo .qa-card { border-left-color: var(--accent-mongo); }
+    .section-mongo .q-num { background: var(--accent-mongo); color: #000; }
+
+    .section-trick .section-header { border-color: var(--accent-trick); }
+    .section-trick .section-header h2 { color: var(--accent-trick); }
+    .section-trick .badge { background: rgba(244,63,94,0.15); color: var(--accent-trick); }
+
+    .qa-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid;
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .qa-card:hover { box-shadow: 0 4px 25px rgba(0,0,0,0.3); }
+
+    .qa-question {
+      padding: 18px 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      user-select: none;
+    }
+
+    .qa-question:hover { background: rgba(255,255,255,0.03); }
+
+    .q-num {
+      min-width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85em; flex-shrink: 0;
+    }
+
+    .q-text { font-weight: 600; font-size: 1.05em; flex: 1; }
+
+    .q-toggle {
+      font-size: 1.4em;
+      color: var(--text-muted);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+
+    .qa-card.open .q-toggle { transform: rotate(180deg); }
+
+    .qa-answer {
+      display: none;
+      padding: 0 22px 22px 22px;
+      border-top: 1px solid var(--border);
+    }
+
+    .qa-card.open .qa-answer { display: block; padding-top: 18px; }
+
+    .qa-answer p { margin-bottom: 12px; color: var(--text); }
+    .qa-answer strong { color: #f1f5f9; }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 12px 0;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+      color: var(--code-text);
+    }
+
+    code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+
+    p code, li code {
+      background: var(--code-bg);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid #30363d;
+      color: #f97316;
+    }
+
+    .comment { color: var(--comment); }
+    .keyword { color: var(--keyword); }
+    .string { color: var(--string); }
+    .func { color: var(--func); }
+    .num { color: var(--number); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 0.92em;
+    }
+
+    th {
+      background: var(--surface2);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      color: #f1f5f9;
+      border: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    ul, ol { margin: 10px 0; padding-left: 24px; }
+    li { margin-bottom: 6px; color: var(--text); }
+
+    .tip {
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-size: 0.92em;
+    }
+
+    .tip::before { content: 'TIP: '; font-weight: 700; color: var(--accent-express); }
+
+    /* Intro card special styling */
+    .intro-script {
+      background: var(--code-bg);
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 12px 0;
+      line-height: 1.9;
+      font-size: 1em;
+      color: var(--text);
+      position: relative;
+    }
+
+    .intro-script::before {
+      content: 'SPEAK THIS';
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      background: var(--accent-intro);
+      color: #000;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 0.7em;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .intro-script .highlight {
+      color: var(--accent-js);
+      font-weight: 600;
+    }
+
+    .intro-script .metric {
+      color: var(--accent-node);
+      font-weight: 600;
+    }
+
+    .project-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      margin: 10px 0;
+    }
+
+    .project-card h4 {
+      color: var(--accent-intro);
+      margin-bottom: 8px;
+      font-size: 1em;
+    }
+
+    .project-card p {
+      margin-bottom: 4px;
+      font-size: 0.93em;
+    }
+
+    .trick-table td:first-child {
+      font-family: 'Fira Code', monospace;
+      color: #f97316;
+      font-size: 0.9em;
+    }
+
+    .trick-table td:nth-child(2) {
+      font-family: 'Fira Code', monospace;
+      color: var(--accent-node);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+
+    .footer .big { font-size: 1.4em; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+
+    .expand-all {
+      display: inline-block;
+      margin: 20px 0;
+      padding: 10px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.95em;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .expand-all:hover { background: var(--surface2); border-color: var(--text-muted); }
+
+    @media print {
+      .hero { padding: 30px; }
+      .qa-answer { display: block !important; padding-top: 18px !important; }
+      .q-toggle { display: none; }
+      .qa-card { break-inside: avoid; }
+      .section-header { position: static; }
+      .expand-all { display: none; }
+      body { background: #fff; color: #1a1a1a; }
+      .qa-card { background: #f9f9f9; border-color: #ddd; }
+      pre, .intro-script { background: #f5f5f5; border-color: #ddd; color: #333; }
+      th { background: #eee; color: #333; border-color: #ddd; }
+      td { border-color: #ddd; color: #333; }
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8em; }
+      .container { padding: 15px; }
+      .qa-question { padding: 14px 16px; }
+      .qa-answer { padding: 0 16px 16px; }
+      pre { padding: 12px; font-size: 0.82em; }
+      .toc-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>MERN Interview Warm-Up</h1>
+  <p>Azad V T &mdash; Full-Stack Software Engineer | AI &amp; LLM Integration</p>
+  <div class="date">March 23, 2026 &bull; Interview Day</div>
+</div>
+
+<div class="toc">
+  <h2>Quick Navigation</h2>
+  <div class="toc-grid">
+    <a class="toc-card intro" href="#intro">
+      <div class="count">3</div>
+      <div class="label">Self Introduction</div>
+    </a>
+    <a class="toc-card hr" href="#hr">
+      <div class="count">10</div>
+      <div class="label">HR / Behavioral</div>
+    </a>
+    <a class="toc-card js" href="#js">
+      <div class="count">15</div>
+      <div class="label">JavaScript</div>
+    </a>
+    <a class="toc-card node" href="#node">
+      <div class="count">10</div>
+      <div class="label">Node.js</div>
+    </a>
+    <a class="toc-card express" href="#express">
+      <div class="count">10</div>
+      <div class="label">Express.js</div>
+    </a>
+    <a class="toc-card mongo" href="#mongo">
+      <div class="count">12</div>
+      <div class="label">MongoDB</div>
+    </a>
+    <a class="toc-card trick" href="#trick">
+      <div class="count">12</div>
+      <div class="label">Rapid-Fire</div>
+    </a>
+  </div>
+  <br>
+  <button class="expand-all" onclick="toggleAll()">Expand / Collapse All</button>
+</div>
+
+<div class="container">
+
+  <!-- ========== SELF INTRODUCTION ========== -->
+  <div class="section-intro" id="intro">
+    <div class="section-header">
+      <h2>Self Introduction <span class="badge">PRACTICE THESE</span></h2>
+    </div>
+
+    <div class="qa-card open">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">1</span>
+        <span class="q-text">"Tell me about yourself" (60-second version)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          Hi, I'm <span class="highlight">Azad V T</span>, a Full-Stack Software Engineer with <span class="metric">3+ years</span> of experience building and scaling production web applications.
+          <br><br>
+          I currently work at <span class="highlight">Techjays in Coimbatore</span> as a Software Engineering Analyst, where I joined as a MERN stack engineer and grew into <span class="highlight">AI/LLM integration</span> work.
+          <br><br>
+          My primary project has been the <span class="highlight">Smart Calling Assistant</span> &mdash; an AI-powered healthcare call center platform. I led the frontend development for real-time supervisor dashboards tracking <span class="metric">20+ concurrent AI-driven calls</span>. I also contributed to the backend, implementing context-aware LLM question generation that reduced manual agent intervention by <span class="metric">~30%</span>, and built automated form-filling workflows that cut handle time by <span class="metric">~40%</span>.
+          <br><br>
+          My core stack is <span class="highlight">React, Node.js, Express, MongoDB</span>, and I also work with <span class="highlight">Python/FastAPI, AWS, and LLM APIs</span> like OpenAI and Gemini.
+          <br><br>
+          I'm someone who owns features end-to-end &mdash; from architecture to deployment &mdash; and I'm always looking for ways to improve performance and code quality. I was recognized as the <span class="highlight">Innovation Champion 2025</span> at Techjays for my contributions to AI-driven product development.
+        </div>
+        <div class="tip">Keep it under 90 seconds. Be conversational, not robotic. Pause after each paragraph.</div>
+      </div>
+    </div>
+
+    <div class="qa-card open">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">2</span>
+        <span class="q-text">"Walk me through your experience" (detailed version)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          I completed my <span class="highlight">BCA from the University of Calicut</span> in 2021, and then did a <span class="highlight">Full Stack Development Program (MERN)</span> at Packapeer Academy in 2022.
+          <br><br>
+          I joined <span class="highlight">Techjays</span> in March 2023 as a MERN stack developer. Early on, I worked on projects like <span class="highlight">Hawx SMS</span> &mdash; a campaign builder where I developed scheduling features supporting batch sends to 10,000+ contacts and improved background job reliability by ~25%.
+          <br><br>
+          I also built <span class="highlight">ViaNova AI</span> &mdash; a procurement analytics dashboard where I optimized data rendering, reducing table load time for large datasets by <span class="metric">~45%</span> using virtualization and memoization.
+          <br><br>
+          Over time, I transitioned into AI-focused work. My biggest project is the <span class="highlight">Smart Calling Assistant</span>, where I led frontend development for real-time dashboards and contributed to LLM backend integration &mdash; dynamic question generation, automated form-filling with confidence scoring, all in a healthcare context.
+          <br><br>
+          I also independently built <span class="highlight">Code Finch</span> &mdash; an internal AI-powered recruitment tool &mdash; complete frontend and backend within a 2-week deadline. It uses LLMs to auto-generate role-specific interview questions.
+          <br><br>
+          Along the way, I earned my <span class="highlight">Google Cloud certification</span> and was recognized as <span class="highlight">Innovation Champion 2025</span> at Techjays.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card open">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">3</span>
+        <span class="q-text">Key Projects — Quick Summaries (when asked to elaborate)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="project-card">
+          <h4>Smart Calling Assistant &mdash; AI healthcare call center</h4>
+          <p>Led React frontend for real-time dashboards managing 20+ concurrent AI-driven insurance verification calls. Built LLM-based context-aware question generation (~30% less manual intervention) and automated form-filling with confidence scoring (~40% faster handle time).</p>
+        </div>
+        <div class="project-card">
+          <h4>Code Finch &mdash; Internal AI recruitment tool</h4>
+          <p>Built end-to-end (frontend + backend) in 2 weeks. Integrated LLMs for auto-generating role-specific, experience-calibrated technical interview questions for 5+ engineering roles.</p>
+        </div>
+        <div class="project-card">
+          <h4>ViaNova AI &mdash; Procurement analytics dashboard</h4>
+          <p>React dashboards integrating procurement APIs for real-time analytics. Optimized data rendering pipeline with virtualization and memoization, reducing table load time by ~45%.</p>
+        </div>
+        <div class="project-card">
+          <h4>Hawx SMS &mdash; Campaign &amp; SMS scheduling platform</h4>
+          <p>Campaign creation + scheduling features in React &amp; Node.js, supporting 10,000+ contact batch sends. Refactored queue logic to reduce background job failures by ~25%.</p>
+        </div>
+        <div class="project-card">
+          <h4>Citi Bank POC &mdash; Role-based secure data access</h4>
+          <p>Proof-of-concept with multi-role authentication, approval workflows, and CSV dataset upload flows. Delivered in 2 weeks.</p>
+        </div>
+        <div class="project-card">
+          <h4>LifeWink &mdash; Secure message scheduling app</h4>
+          <p>End-to-end auth, authorization, and secure scheduled messaging. Full MERN stack with data integrity and consistency.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== HR / BEHAVIORAL ========== -->
+  <div class="section-hr" id="hr">
+    <div class="section-header">
+      <h2>HR / Behavioral Questions <span class="badge">10 QUESTIONS</span></h2>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">1</span>
+        <span class="q-text">Why are you looking for a new opportunity?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          I've had a great experience at Techjays &mdash; I grew from a MERN developer to working on AI-driven products, which I'm proud of. But after 3 years, I feel I'm ready for the next challenge.
+          <br><br>
+          I want to work on larger-scale systems, collaborate with senior engineers I can learn from, and contribute to products that serve a bigger user base. I'm looking for a place where I can deepen my technical skills and take on more ownership.
+        </div>
+        <div class="tip">Never badmouth your current employer. Focus on growth, learning, and new challenges.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">2</span>
+        <span class="q-text">What is your biggest strength?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          I'd say my biggest strength is <span class="highlight">owning features end-to-end</span>. I don't just write code &mdash; I think about the architecture, user experience, performance, and deployment.
+          <br><br>
+          For example, with Code Finch, I built the entire recruitment screening tool &mdash; frontend, backend, LLM integration &mdash; independently within a 2-week deadline. I also proactively optimize things &mdash; like when I reduced table load time by 45% on ViaNova AI through virtualization and memoization, which wasn't even assigned to me; I just saw it was slow and fixed it.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">3</span>
+        <span class="q-text">What is your biggest weakness?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          I tend to <span class="highlight">over-invest time in getting things right</span> before shipping. Early in my career, I'd spend extra time perfecting code when a good-enough solution would have been fine for the first iteration.
+          <br><br>
+          I've been actively working on this &mdash; I now focus on <span class="highlight">shipping an MVP first and iterating</span>. Working in Agile sprints at Techjays has really helped me find the right balance between quality and speed.
+        </div>
+        <div class="tip">Always pick a real weakness, but show how you're actively improving it.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">4</span>
+        <span class="q-text">Tell me about a challenging bug or problem you solved</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          On the Smart Calling Assistant, we had a performance issue where the supervisor dashboard was lagging when tracking <span class="metric">20+ concurrent calls</span> in real-time. The UI was re-rendering unnecessarily every time any call's state changed, even for calls the supervisor wasn't viewing.
+          <br><br>
+          I <span class="highlight">profiled the React component tree</span>, identified that the state updates were cascading through deeply nested components. I restructured the state management &mdash; isolated call-specific state using proper component boundaries and memoization, used <code>React.memo</code> and <code>useMemo</code> strategically.
+          <br><br>
+          The result was a <span class="metric">~35% improvement in load time</span> across all 3 dashboards. The supervisor could now monitor calls smoothly without any lag.
+        </div>
+        <div class="tip">Use the STAR method: Situation, Task, Action, Result. Always include a measurable result.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">5</span>
+        <span class="q-text">Why should we hire you?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          Three reasons:
+          <br><br>
+          First, I have <span class="highlight">3+ years of production experience</span> across the full MERN stack, not just tutorial projects. I've shipped features to real users in healthcare, procurement, and recruitment domains.
+          <br><br>
+          Second, I bring <span class="highlight">versatility</span>. I'm not just a frontend or backend developer &mdash; I've done React dashboards, Node.js APIs, MongoDB schema design, Python/FastAPI services, LLM integration, and AWS deployments. I can contribute wherever the team needs me.
+          <br><br>
+          Third, I'm <span class="highlight">self-driven</span>. I built Code Finch end-to-end independently, I proactively optimize performance issues I spot, and I was recognized as Innovation Champion for going beyond what was assigned.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">6</span>
+        <span class="q-text">How do you handle tight deadlines?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          I break the task into smaller deliverables and <span class="highlight">prioritize the MVP</span>.
+          <br><br>
+          For example, with Code Finch, I had a <span class="metric">2-week deadline</span> to build a complete frontend + backend recruitment tool. I identified the critical path &mdash; the core screening workflow and LLM integration &mdash; built that first, then layered on UI polish and edge cases. Delivered on time.
+          <br><br>
+          I also communicate early if I see a risk. In Agile sprints at Techjays, I'd flag blockers in daily standups rather than waiting until the last day.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">7</span>
+        <span class="q-text">Describe a time you worked in a team</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          At Techjays, I work in a <span class="metric">6-person cross-functional team</span> &mdash; designers, backend engineers, QA, and myself handling frontend and some backend work.
+          <br><br>
+          On the Smart Calling Assistant, the backend team was building the LLM pipeline while I was building the supervisor dashboard. We had to coordinate closely because my UI depended on real-time data from their WebSocket endpoints.
+          <br><br>
+          I <span class="highlight">set up contract-first development</span> &mdash; we agreed on the data shapes and event types upfront, so I could build and test the frontend with mock data while they built the backend. When both sides were ready, integration went smoothly. We consistently delivered features on schedule.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">8</span>
+        <span class="q-text">Where do you see yourself in 3-5 years?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          In 3-5 years, I see myself as a <span class="highlight">Senior/Staff Software Engineer</span> who can architect systems end-to-end and mentor junior developers.
+          <br><br>
+          I want to deepen my expertise in <span class="highlight">system design, distributed systems, and AI integration</span>. I'm already doing some of this at Techjays, but I want to work on larger-scale systems with higher traffic and more complex requirements.
+          <br><br>
+          I also want to contribute to <span class="highlight">open source</span> and share knowledge through technical writing. I'm currently building my personal site at azadvt.com.
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">9</span>
+        <span class="q-text">What are your salary expectations?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <div class="intro-script">
+          I'm open to discussing compensation based on the role's scope, responsibilities, and the overall package including benefits.
+          <br><br>
+          I'd love to understand more about the role first, and then I'm happy to share a range that works for both of us. Could you share the budget you have in mind for this position?
+        </div>
+        <div class="tip">Always try to let them share a number first. If pressed, give a researched range based on market data. Never give a single number.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">10</span>
+        <span class="q-text">Do you have any questions for us?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Always ask 2-3 questions. It shows genuine interest. Pick from these:</strong></p>
+        <ul>
+          <li>"What does the tech stack look like, and are there any migrations or upgrades planned?"</li>
+          <li>"How is the engineering team structured? How many people would I be working with?"</li>
+          <li>"What does a typical sprint look like? How do you handle code reviews?"</li>
+          <li>"What are the biggest technical challenges the team is facing right now?"</li>
+          <li>"What does the growth path look like for this role?"</li>
+          <li>"How do you measure success for someone in this position in the first 6 months?"</li>
+        </ul>
+        <div class="tip">Never say "No, I don't have any questions." It signals lack of interest.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <div class="section-js" id="js">
+    <div class="section-header">
+      <h2>JavaScript <span class="badge">15 QUESTIONS</span></h2>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">1</span>
+        <span class="q-text">var vs let vs const</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <table>
+          <tr><th>Feature</th><th>var</th><th>let</th><th>const</th></tr>
+          <tr><td>Scope</td><td>Function</td><td>Block</td><td>Block</td></tr>
+          <tr><td>Hoisting</td><td>Yes (as <code>undefined</code>)</td><td>Yes (TDZ)</td><td>Yes (TDZ)</td></tr>
+          <tr><td>Re-declaration</td><td>Allowed</td><td>Not allowed</td><td>Not allowed</td></tr>
+          <tr><td>Re-assignment</td><td>Allowed</td><td>Allowed</td><td>Not allowed</td></tr>
+        </table>
+<pre><span class="comment">// Classic interview trap</span>
+<span class="keyword">for</span> (<span class="keyword">var</span> i = 0; i &lt; 5; i++) {
+  setTimeout(() =&gt; console.log(i), 1000);
+}
+<span class="comment">// Output: 5, 5, 5, 5, 5 — one shared `i` (function-scoped)</span>
+
+<span class="keyword">for</span> (<span class="keyword">let</span> i = 0; i &lt; 5; i++) {
+  setTimeout(() =&gt; console.log(i), 1000);
+}
+<span class="comment">// Output: 0, 1, 2, 3, 4 — each iteration gets its own `i` (block-scoped)</span></pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">2</span>
+        <span class="q-text">Hoisting &amp; Temporal Dead Zone</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <p>JavaScript moves <strong>declarations</strong> to the top of their scope during compilation &mdash; but <strong>not assignments</strong>.</p>
+<pre>console.log(a); <span class="comment">// undefined — var hoisted</span>
+<span class="keyword">var</span> a = 5;
+
+console.log(b); <span class="comment">// ReferenceError — let is in TDZ</span>
+<span class="keyword">let</span> b = 10;
+
+greet(); <span class="comment">// works — function declarations fully hoisted</span>
+<span class="keyword">function</span> <span class="func">greet</span>() { console.log(<span class="string">"hi"</span>); }
+
+hello(); <span class="comment">// TypeError — var hello is undefined, not a function</span>
+<span class="keyword">var</span> hello = <span class="keyword">function</span>() { console.log(<span class="string">"hello"</span>); };</pre>
+        <p><strong>TDZ (Temporal Dead Zone)</strong>: The period between entering a scope and the <code>let</code>/<code>const</code> declaration where the variable exists but can't be accessed.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">3</span>
+        <span class="q-text">Closures</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <p>A function that <strong>remembers variables from its outer scope</strong> even after the outer function has returned.</p>
+<pre><span class="keyword">function</span> <span class="func">createCounter</span>() {
+  <span class="keyword">let</span> count = 0;
+  <span class="keyword">return</span> {
+    increment: () =&gt; ++count,
+    getCount: () =&gt; count
+  };
+}
+<span class="keyword">const</span> counter = createCounter();
+counter.increment(); <span class="comment">// 1</span>
+counter.increment(); <span class="comment">// 2</span>
+counter.getCount();  <span class="comment">// 2</span></pre>
+        <p><strong>Use cases</strong>: data privacy, function factories, memoization, module pattern.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">4</span>
+        <span class="q-text">The <code>this</code> keyword</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <table>
+          <tr><th>Context</th><th><code>this</code> refers to</th></tr>
+          <tr><td>Global (non-strict)</td><td><code>window</code> / <code>global</code></td></tr>
+          <tr><td>Global (strict mode)</td><td><code>undefined</code></td></tr>
+          <tr><td>Object method <code>obj.fn()</code></td><td><code>obj</code></td></tr>
+          <tr><td>Arrow function</td><td>Inherits from enclosing scope (lexical)</td></tr>
+          <tr><td><code>new Fn()</code></td><td>The new object</td></tr>
+          <tr><td><code>call/apply/bind</code></td><td>Explicitly set</td></tr>
+          <tr><td>Event handler</td><td>The DOM element</td></tr>
+        </table>
+<pre><span class="keyword">const</span> obj = {
+  name: <span class="string">"Alice"</span>,
+  regular() { console.log(<span class="keyword">this</span>.name); },     <span class="comment">// "Alice"</span>
+  arrow: () =&gt; console.log(<span class="keyword">this</span>.name)         <span class="comment">// undefined (lexical this)</span>
+};</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">5</span>
+        <span class="q-text">call vs apply vs bind</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">function</span> <span class="func">greet</span>(greeting, punct) {
+  console.log(<span class="string">`${greeting}, I'm ${this.name}${punct}`</span>);
+}
+<span class="keyword">const</span> person = { name: <span class="string">"John"</span> };
+
+greet.<span class="func">call</span>(person, <span class="string">"Hi"</span>, <span class="string">"!"</span>);       <span class="comment">// Call = Comma separated args</span>
+greet.<span class="func">apply</span>(person, [<span class="string">"Hi"</span>, <span class="string">"!"</span>]);    <span class="comment">// Apply = Array of args</span>
+<span class="keyword">const</span> bound = greet.<span class="func">bind</span>(person);    <span class="comment">// Bind = returns new function</span>
+bound(<span class="string">"Hi"</span>, <span class="string">"!"</span>);</pre>
+        <div class="tip">Memory trick: <strong>C</strong>all = <strong>C</strong>omma, <strong>A</strong>pply = <strong>A</strong>rray, <strong>B</strong>ind = <strong>B</strong>ound (returns fn)</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">6</span>
+        <span class="q-text">Event Loop, Call Stack &amp; Queues</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <p><strong>Order</strong>: Sync code &rarr; ALL Microtasks (Promises) &rarr; ONE Macrotask (setTimeout) &rarr; repeat</p>
+<pre>console.log(<span class="string">"1"</span>);
+setTimeout(() =&gt; console.log(<span class="string">"2"</span>), 0);
+Promise.resolve().then(() =&gt; console.log(<span class="string">"3"</span>));
+console.log(<span class="string">"4"</span>);
+
+<span class="comment">// Output: 1, 4, 3, 2</span>
+<span class="comment">// Sync first (1,4), then microtask (3), then macrotask (2)</span></pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">7</span>
+        <span class="q-text">Promises &amp; async/await</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="comment">// Promise chain</span>
+fetchData()
+  .then(data =&gt; process(data))
+  .catch(err =&gt; handle(err));
+
+<span class="comment">// async/await (cleaner)</span>
+<span class="keyword">async function</span> <span class="func">getData</span>() {
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> data = <span class="keyword">await</span> fetchData();
+    console.log(data);
+  } <span class="keyword">catch</span> (err) {
+    console.error(err);
+  }
+}</pre>
+        <p>A Promise has 3 states: <strong>pending</strong>, <strong>fulfilled</strong>, <strong>rejected</strong>. Once settled, it cannot change.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">8</span>
+        <span class="q-text">== vs === (Loose vs Strict Equality)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <ul>
+          <li><code>==</code> &mdash; <strong>loose</strong> equality with type coercion (<code>"5" == 5</code> &rarr; <code>true</code>)</li>
+          <li><code>===</code> &mdash; <strong>strict</strong> equality, no coercion (<code>"5" === 5</code> &rarr; <code>false</code>)</li>
+        </ul>
+        <div class="tip">Always use <code>===</code> in production code.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">9</span>
+        <span class="q-text">Array Methods (map, filter, reduce, find, some, every)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre>[1,2,3].<span class="func">map</span>(x =&gt; x * 2);           <span class="comment">// [2,4,6] — transform each</span>
+[1,2,3].<span class="func">filter</span>(x =&gt; x &gt; 1);        <span class="comment">// [2,3] — keep matching</span>
+[1,2,3].<span class="func">reduce</span>((a,x) =&gt; a+x, 0);   <span class="comment">// 6 — accumulate to single value</span>
+[1,2,3].<span class="func">find</span>(x =&gt; x &gt; 1);          <span class="comment">// 2 — first match</span>
+[1,2,3].<span class="func">some</span>(x =&gt; x &gt; 2);          <span class="comment">// true — any match?</span>
+[1,2,3].<span class="func">every</span>(x =&gt; x &gt; 0);         <span class="comment">// true — all match?</span></pre>
+        <p><code>map</code>/<code>filter</code> return <strong>new arrays</strong>. <code>reduce</code> returns a <strong>single value</strong>. <code>find</code> returns <strong>first match</strong> or <code>undefined</code>.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">10</span>
+        <span class="q-text">Debounce vs Throttle</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <ul>
+          <li><strong>Debounce</strong> = wait for silence. Resets timer on each call. (search input, resize)</li>
+          <li><strong>Throttle</strong> = max one call per interval. (scroll, API rate limiting)</li>
+        </ul>
+<pre><span class="keyword">function</span> <span class="func">debounce</span>(fn, delay) {
+  <span class="keyword">let</span> timer;
+  <span class="keyword">return</span> (...args) =&gt; {
+    clearTimeout(timer);
+    timer = setTimeout(() =&gt; fn(...args), delay);
+  };
+}
+
+<span class="keyword">function</span> <span class="func">throttle</span>(fn, limit) {
+  <span class="keyword">let</span> last = 0;
+  <span class="keyword">return</span> (...args) =&gt; {
+    <span class="keyword">const</span> now = Date.now();
+    <span class="keyword">if</span> (now - last &gt;= limit) { last = now; fn(...args); }
+  };
+}</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">11</span>
+        <span class="q-text">Prototypal Inheritance &amp; Prototype Chain</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">function</span> <span class="func">Animal</span>(name) { <span class="keyword">this</span>.name = name; }
+Animal.prototype.speak = <span class="keyword">function</span>() { <span class="keyword">return</span> <span class="string">`${this.name} makes a sound`</span>; };
+
+<span class="keyword">function</span> <span class="func">Dog</span>(name) { Animal.call(<span class="keyword">this</span>, name); }
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;</pre>
+        <p><strong>Chain</strong>: <code>rex</code> &rarr; <code>Dog.prototype</code> &rarr; <code>Animal.prototype</code> &rarr; <code>Object.prototype</code> &rarr; <code>null</code></p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">12</span>
+        <span class="q-text">Promise.all vs allSettled vs race vs any</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <table>
+          <tr><th>Method</th><th>Resolves</th><th>Rejects</th></tr>
+          <tr><td><code>Promise.all</code></td><td>All fulfill</td><td>First rejection</td></tr>
+          <tr><td><code>Promise.allSettled</code></td><td>Always (after all)</td><td>Never</td></tr>
+          <tr><td><code>Promise.race</code></td><td>First settled</td><td>First settled</td></tr>
+          <tr><td><code>Promise.any</code></td><td>First fulfilled</td><td>All rejected</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">13</span>
+        <span class="q-text">Shallow Copy vs Deep Copy</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">const</span> obj = { a: 1, b: { c: 2 } };
+<span class="keyword">const</span> shallow = { ...obj };       <span class="comment">// nested objects share reference</span>
+<span class="keyword">const</span> deep = structuredClone(obj); <span class="comment">// fully independent</span></pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">14</span>
+        <span class="q-text">Type Coercion Traps</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="string">"5"</span> + 3          <span class="comment">// "53" (string concat)</span>
+<span class="string">"5"</span> - 3          <span class="comment">// 2  (numeric)</span>
+<span class="keyword">true</span> + <span class="keyword">true</span>      <span class="comment">// 2</span>
+<span class="keyword">null</span> + 1         <span class="comment">// 1 (null &rarr; 0)</span>
+<span class="keyword">undefined</span> + 1    <span class="comment">// NaN</span>
+[] + []           <span class="comment">// ""</span>
+[] + {}           <span class="comment">// "[object Object]"</span>
+<span class="keyword">null</span> == <span class="keyword">undefined</span>  <span class="comment">// true (special rule)</span>
+<span class="keyword">null</span> === <span class="keyword">undefined</span> <span class="comment">// false</span>
+<span class="keyword">null</span> == 0          <span class="comment">// false</span>
+<span class="keyword">null</span> &gt;= 0          <span class="comment">// true (coerces null to 0!)</span></pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">15</span>
+        <span class="q-text">Optional Chaining (?.) &amp; Nullish Coalescing (??)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre>user?.address?.city;       <span class="comment">// safe nested access</span>
+user?.greet?.();          <span class="comment">// safe method call</span>
+
+<span class="keyword">const</span> name = <span class="keyword">null</span> ?? <span class="string">"Guest"</span>;    <span class="comment">// "Guest" (null/undefined only)</span>
+<span class="keyword">const</span> count = 0 ?? 10;           <span class="comment">// 0 (0 is NOT null)</span>
+<span class="keyword">const</span> count2 = 0 || 10;          <span class="comment">// 10 (|| treats 0 as falsy)</span></pre>
+        <div class="tip">Use <code>??</code> when 0, "", false are valid values. Use <code>||</code> for any falsy fallback.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== NODE.JS ========== -->
+  <div class="section-node" id="node">
+    <div class="section-header">
+      <h2>Node.js <span class="badge">10 QUESTIONS</span></h2>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">1</span>
+        <span class="q-text">What is Node.js?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <p>A <strong>JavaScript runtime</strong> built on Chrome's <strong>V8 engine</strong>. Runs JS outside the browser.</p>
+        <ul>
+          <li><strong>Single-threaded</strong> with event-driven architecture</li>
+          <li><strong>Non-blocking I/O</strong> &mdash; doesn't wait for file reads, DB queries</li>
+          <li>Uses <strong>libuv</strong> (C library) for async I/O and thread pool</li>
+          <li>Great for <strong>I/O-heavy</strong> apps (APIs, real-time), not for CPU-heavy</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">2</span>
+        <span class="q-text">Event Loop Phases</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre>1. <span class="keyword">timers</span>             &rarr; setTimeout, setInterval
+2. <span class="keyword">pending callbacks</span>  &rarr; deferred I/O callbacks
+3. <span class="keyword">idle, prepare</span>      &rarr; internal
+4. <span class="keyword">poll</span>               &rarr; retrieve new I/O events
+5. <span class="keyword">check</span>              &rarr; setImmediate()
+6. <span class="keyword">close callbacks</span>    &rarr; socket.on('close')
+
+<span class="comment">// Between EVERY phase: process.nextTick() and Promise microtasks run</span></pre>
+        <p><strong>Priority</strong>: <code>nextTick</code> &gt; <code>Promise.then</code> &gt; <code>setTimeout(0)</code> &ge; <code>setImmediate</code></p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">3</span>
+        <span class="q-text">CommonJS vs ES Modules</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <table>
+          <tr><th>Feature</th><th>CommonJS</th><th>ES Modules</th></tr>
+          <tr><td>Syntax</td><td><code>require()</code> / <code>module.exports</code></td><td><code>import</code> / <code>export</code></td></tr>
+          <tr><td>Loading</td><td>Synchronous</td><td>Asynchronous</td></tr>
+          <tr><td>Parsed</td><td>Runtime (dynamic)</td><td>Compile time (static)</td></tr>
+          <tr><td>Tree shaking</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Top-level await</td><td>No</td><td>Yes</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">4</span>
+        <span class="q-text">Streams</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <p>Process data <strong>chunk by chunk</strong> &mdash; no need to load entire file into memory.</p>
+        <ul>
+          <li><strong>Readable</strong> &mdash; source (fs.createReadStream)</li>
+          <li><strong>Writable</strong> &mdash; destination (fs.createWriteStream)</li>
+          <li><strong>Duplex</strong> &mdash; both (TCP socket)</li>
+          <li><strong>Transform</strong> &mdash; modify data passing through (zlib)</li>
+        </ul>
+<pre>readable.pipe(writable); <span class="comment">// handles backpressure automatically</span></pre>
+        <p>2GB file with <code>readFile</code> &rarr; 2GB in RAM. Streams &rarr; ~64KB chunks.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">5</span>
+        <span class="q-text">EventEmitter</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">const</span> EventEmitter = require(<span class="string">'events'</span>);
+
+<span class="keyword">class</span> <span class="func">OrderService</span> <span class="keyword">extends</span> EventEmitter {
+  placeOrder(order) { <span class="keyword">this</span>.emit(<span class="string">'orderPlaced'</span>, order); }
+}
+
+service.on(<span class="string">'orderPlaced'</span>, handler);   <span class="comment">// listen</span>
+service.once(<span class="string">'orderPlaced'</span>, handler); <span class="comment">// once</span>
+service.off(<span class="string">'orderPlaced'</span>, handler);  <span class="comment">// remove</span></pre>
+        <p><code>http.Server</code>, <code>fs.ReadStream</code>, <code>process</code> &mdash; all extend EventEmitter.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">6</span>
+        <span class="q-text">Blocking vs Non-Blocking</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="comment">// BLOCKING — entire server waits</span>
+<span class="keyword">const</span> data = fs.readFileSync(<span class="string">'big.txt'</span>);
+
+<span class="comment">// NON-BLOCKING — server keeps handling requests</span>
+fs.readFile(<span class="string">'big.txt'</span>, (err, data) =&gt; { ... });
+console.log(<span class="string">'I run immediately!'</span>);</pre>
+        <div class="tip">Never use sync methods in a server. They block the entire event loop.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">7</span>
+        <span class="q-text">Clustering vs Worker Threads</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <table>
+          <tr><th>Cluster</th><th>Worker Threads</th></tr>
+          <tr><td>Separate processes</td><td>Same process, threads</td></tr>
+          <tr><td>No shared memory</td><td>Can share (SharedArrayBuffer)</td></tr>
+          <tr><td>For scaling HTTP</td><td>For CPU-heavy tasks</td></tr>
+        </table>
+        <p><strong>Production</strong>: Use PM2 &mdash; <code>pm2 start app.js -i max</code></p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">8</span>
+        <span class="q-text">Error Handling Patterns</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <ol>
+          <li><strong>Sync</strong>: <code>try/catch</code></li>
+          <li><strong>Callbacks</strong>: error-first <code>(err, data) =&gt; {}</code></li>
+          <li><strong>Promises</strong>: <code>.catch()</code></li>
+          <li><strong>async/await</strong>: <code>try/catch</code></li>
+          <li><strong>Global</strong>: <code>process.on('uncaughtException')</code> / <code>process.on('unhandledRejection')</code></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">9</span>
+        <span class="q-text">Environment Variables &amp; dotenv</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre>process.env.PORT
+process.env.NODE_ENV
+require(<span class="string">'dotenv'</span>).config(); <span class="comment">// loads .env file</span>
+
+<span class="comment">// .env file: PORT=3000, DB_URL=..., JWT_SECRET=...</span>
+<span class="comment">// NEVER commit .env to git!</span></pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">10</span>
+        <span class="q-text">Tricky Output Question</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre>console.log(<span class="string">'start'</span>);
+setTimeout(() =&gt; console.log(<span class="string">'timeout'</span>), 0);
+setImmediate(() =&gt; console.log(<span class="string">'immediate'</span>));
+process.nextTick(() =&gt; console.log(<span class="string">'nextTick'</span>));
+Promise.resolve().then(() =&gt; console.log(<span class="string">'promise'</span>));
+console.log(<span class="string">'end'</span>);
+
+<span class="comment">// start, end, nextTick, promise, timeout/immediate</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== EXPRESS.JS ========== -->
+  <div class="section-express" id="express">
+    <div class="section-header">
+      <h2>Express.js <span class="badge">10 QUESTIONS</span></h2>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">1</span>
+        <span class="q-text">What is Express.js?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <p>Minimal, <strong>unopinionated</strong> web framework for Node.js. Provides routing, middleware, HTTP utilities. Sits on top of Node's <code>http</code> module.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">2</span>
+        <span class="q-text">req.params vs req.query vs req.body</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="comment">// GET /users/5?role=admin   Body: { "name": "Alice" }</span>
+
+req.params  <span class="comment">// { id: '5' }       — from /:id</span>
+req.query   <span class="comment">// { role: 'admin' } — from ?key=value</span>
+req.body    <span class="comment">// { name: 'Alice' } — from POST body (needs express.json())</span></pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">3</span>
+        <span class="q-text">Middleware &mdash; 5 Types</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="comment">// 1. Application-level</span>
+app.use((req, res, next) =&gt; { console.log(req.method); next(); });
+
+<span class="comment">// 2. Router-level</span>
+router.use(authMiddleware);
+
+<span class="comment">// 3. Built-in</span>
+app.use(express.json());
+app.use(express.static(<span class="string">'public'</span>));
+
+<span class="comment">// 4. Third-party</span>
+app.use(cors()); app.use(helmet());
+
+<span class="comment">// 5. Error-handling (MUST have 4 params!)</span>
+app.use((err, req, res, next) =&gt; {
+  res.status(500).json({ error: err.message });
+});</pre>
+        <div class="tip">Must call <code>next()</code> or send response. <code>next(err)</code> skips to error middleware.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">4</span>
+        <span class="q-text">Express Router (Modular Routes)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="comment">// routes/users.js</span>
+<span class="keyword">const</span> router = require(<span class="string">'express'</span>).Router();
+router.get(<span class="string">'/'</span>, getUsers);
+router.post(<span class="string">'/'</span>, createUser);
+module.exports = router;
+
+<span class="comment">// app.js</span>
+app.use(<span class="string">'/api/users'</span>, userRoutes);</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">5</span>
+        <span class="q-text">RESTful API Design</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre>GET    /api/users       <span class="comment">— get all</span>
+POST   /api/users       <span class="comment">— create</span>
+GET    /api/users/:id   <span class="comment">— get one</span>
+PUT    /api/users/:id   <span class="comment">— replace entire</span>
+PATCH  /api/users/:id   <span class="comment">— partial update</span>
+DELETE /api/users/:id   <span class="comment">— delete</span></pre>
+        <p><strong>Rules</strong>: nouns (not verbs), plural, proper status codes, stateless.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">6</span>
+        <span class="q-text">HTTP Status Codes</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <table>
+          <tr><th>Code</th><th>Meaning</th><th>When</th></tr>
+          <tr><td><code>200</code></td><td>OK</td><td>Successful GET/PUT/PATCH</td></tr>
+          <tr><td><code>201</code></td><td>Created</td><td>Successful POST</td></tr>
+          <tr><td><code>204</code></td><td>No Content</td><td>Successful DELETE</td></tr>
+          <tr><td><code>400</code></td><td>Bad Request</td><td>Validation failed</td></tr>
+          <tr><td><code>401</code></td><td>Unauthorized</td><td>Not authenticated</td></tr>
+          <tr><td><code>403</code></td><td>Forbidden</td><td>No permission</td></tr>
+          <tr><td><code>404</code></td><td>Not Found</td><td>Resource missing</td></tr>
+          <tr><td><code>409</code></td><td>Conflict</td><td>Duplicate</td></tr>
+          <tr><td><code>500</code></td><td>Internal Error</td><td>Server bug</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">7</span>
+        <span class="q-text">Error Handling (asyncHandler pattern)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">const</span> <span class="func">asyncHandler</span> = (fn) =&gt; (req, res, next) =&gt;
+  Promise.resolve(fn(req, res, next)).catch(next);
+
+app.get(<span class="string">'/users/:id'</span>, asyncHandler(<span class="keyword">async</span> (req, res) =&gt; {
+  <span class="keyword">const</span> user = <span class="keyword">await</span> User.findById(req.params.id);
+  <span class="keyword">if</span> (!user) <span class="keyword">return</span> res.status(404).json({ error: <span class="string">'Not found'</span> });
+  res.json(user);
+}));
+
+<span class="comment">// Global error middleware (ALWAYS last)</span>
+app.use((err, req, res, next) =&gt; {
+  res.status(err.statusCode || 500).json({ error: err.message });
+});</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">8</span>
+        <span class="q-text">CORS</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <p>Browser blocks requests from different origin (domain/port/protocol).</p>
+<pre>app.use(cors({
+  origin: [<span class="string">'http://localhost:3000'</span>],
+  methods: [<span class="string">'GET'</span>, <span class="string">'POST'</span>, <span class="string">'PUT'</span>, <span class="string">'DELETE'</span>],
+  credentials: <span class="keyword">true</span>
+}));</pre>
+        <p>Browser sends <strong>preflight OPTIONS</strong> &rarr; server responds with allowed origins &rarr; actual request.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">9</span>
+        <span class="q-text">Auth Middleware (JWT)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">const</span> <span class="func">authenticate</span> = (req, res, next) =&gt; {
+  <span class="keyword">const</span> token = req.headers.authorization?.split(<span class="string">' '</span>)[1];
+  <span class="keyword">if</span> (!token) <span class="keyword">return</span> res.status(401).json({ error: <span class="string">'No token'</span> });
+  <span class="keyword">try</span> {
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } <span class="keyword">catch</span> { res.status(401).json({ error: <span class="string">'Invalid token'</span> }); }
+};
+
+<span class="keyword">const</span> <span class="func">authorize</span> = (...roles) =&gt; (req, res, next) =&gt; {
+  <span class="keyword">if</span> (!roles.includes(req.user.role))
+    <span class="keyword">return</span> res.status(403).json({ error: <span class="string">'Forbidden'</span> });
+  next();
+};
+
+app.get(<span class="string">'/admin'</span>, authenticate, authorize(<span class="string">'admin'</span>), handler);</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">10</span>
+        <span class="q-text">app.use() vs app.get() vs app.all()</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <table>
+          <tr><th>Method</th><th>HTTP</th><th>Path Matching</th></tr>
+          <tr><td><code>app.use('/api')</code></td><td>ALL</td><td><strong>Prefix</strong> (/api/users matches)</td></tr>
+          <tr><td><code>app.get('/api')</code></td><td>GET only</td><td><strong>Exact</strong> path</td></tr>
+          <tr><td><code>app.all('/api')</code></td><td>ALL</td><td><strong>Exact</strong> path</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MONGODB ========== -->
+  <div class="section-mongo" id="mongo">
+    <div class="section-header">
+      <h2>MongoDB &amp; Mongoose <span class="badge">12 QUESTIONS</span></h2>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">1</span>
+        <span class="q-text">SQL vs NoSQL &mdash; When to use what?</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <table>
+          <tr><th>SQL</th><th>NoSQL (MongoDB)</th></tr>
+          <tr><td>Fixed schema, relational</td><td>Flexible, document-based</td></tr>
+          <tr><td>Complex joins &amp; transactions</td><td>Fast reads, horizontal scaling</td></tr>
+          <tr><td>Vertical scaling</td><td>Sharding</td></tr>
+          <tr><td>Banking, ERP</td><td>CMS, real-time, IoT</td></tr>
+        </table>
+        <div class="tip">Many relationships + strict consistency &rarr; SQL. Nested/hierarchical + flexibility &rarr; MongoDB.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">2</span>
+        <span class="q-text">CRUD Operations (Mongoose)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">await</span> User.create({ name: <span class="string">"Alice"</span> });
+
+<span class="keyword">await</span> User.find({ isActive: <span class="keyword">true</span> })
+  .select(<span class="string">'name email'</span>).sort({ createdAt: -1 })
+  .skip(10).limit(5).lean();
+
+<span class="keyword">await</span> User.findByIdAndUpdate(id,
+  { $set: { name: <span class="string">"Bob"</span> } }, { new: <span class="keyword">true</span> });
+
+<span class="keyword">await</span> User.findByIdAndDelete(id);</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">3</span>
+        <span class="q-text">Query Operators</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="comment">// Comparison</span>: $eq, $ne, $gt, $gte, $lt, $lte, $in, $nin
+<span class="comment">// Logical</span>:    $and, $or, $not, $nor
+<span class="comment">// Element</span>:    $exists, $type
+<span class="comment">// Array</span>:      $all, $elemMatch, $size
+
+User.find({
+  age: { $gte: 18 },
+  role: { $in: [<span class="string">"admin"</span>, <span class="string">"editor"</span>] },
+  phone: { $exists: <span class="keyword">true</span> }
+});</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">4</span>
+        <span class="q-text">Embedding vs Referencing</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <table>
+          <tr><th></th><th>Embedding</th><th>Referencing</th></tr>
+          <tr><td><strong>When</strong></td><td>1:1, 1:few, accessed together</td><td>1:many, many:many, shared</td></tr>
+          <tr><td><strong>Pros</strong></td><td>Single query, fast</td><td>No duplication, smaller docs</td></tr>
+          <tr><td><strong>Cons</strong></td><td>16MB limit, duplication</td><td>Multiple queries/$lookup</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">5</span>
+        <span class="q-text">Indexing</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre>db.users.createIndex({ email: 1 });                   <span class="comment">// single</span>
+db.users.createIndex({ name: 1, age: -1 });           <span class="comment">// compound</span>
+db.users.createIndex({ email: 1 }, { unique: true }); <span class="comment">// unique</span>
+db.posts.createIndex({ title: <span class="string">"text"</span> });             <span class="comment">// text</span>
+db.sessions.createIndex({ createdAt: 1 },
+  { expireAfterSeconds: 3600 });                       <span class="comment">// TTL</span></pre>
+        <ul>
+          <li><strong>COLLSCAN</strong> = bad, <strong>IXSCAN</strong> = good. Use <code>explain()</code></li>
+          <li>ESR: <strong>E</strong>quality &rarr; <strong>S</strong>ort &rarr; <strong>R</strong>ange</li>
+          <li><code>_id</code> is auto-indexed</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">6</span>
+        <span class="q-text">Aggregation Pipeline</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre>db.orders.aggregate([
+  { <span class="func">$match</span>: { status: <span class="string">"completed"</span> } },
+  { <span class="func">$group</span>: {
+    _id: <span class="string">"$customerId"</span>,
+    total: { $sum: <span class="string">"$amount"</span> },
+    count: { $count: {} }
+  }},
+  { <span class="func">$sort</span>: { total: -1 } },
+  { <span class="func">$limit</span>: 10 },
+  { <span class="func">$project</span>: { _id: 0, customerId: <span class="string">"$_id"</span>, total: 1 } }
+]);</pre>
+        <p><strong>Key stages</strong>: $match, $group, $sort, $project, $lookup (join), $unwind (flatten array)</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">7</span>
+        <span class="q-text">Mongoose Schema &amp; Model</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">const</span> userSchema = <span class="keyword">new</span> mongoose.Schema({
+  name: { type: String, required: <span class="keyword">true</span>, trim: <span class="keyword">true</span> },
+  email: { type: String, unique: <span class="keyword">true</span>, lowercase: <span class="keyword">true</span>,
+    match: [/^\S+@\S+\.\S+$/, <span class="string">'Invalid email'</span>] },
+  role: { type: String, enum: [<span class="string">'user'</span>, <span class="string">'admin'</span>], default: <span class="string">'user'</span> },
+  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: <span class="string">'Post'</span> }]
+}, { timestamps: <span class="keyword">true</span> });
+
+<span class="keyword">const</span> User = mongoose.model(<span class="string">'User'</span>, userSchema);</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">8</span>
+        <span class="q-text">Populate (Joins)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">await</span> Post.findById(id).populate(<span class="string">'author'</span>, <span class="string">'name email'</span>);
+<span class="comment">// post.author = { _id: ..., name: "Alice", email: "a@a.com" }</span>
+
+<span class="comment">// Multiple populates</span>
+<span class="keyword">await</span> Post.findById(id)
+  .populate(<span class="string">'author'</span>, <span class="string">'name'</span>)
+  .populate(<span class="string">'comments'</span>);
+
+<span class="comment">// Nested populate</span>
+<span class="keyword">await</span> Post.findById(id).populate({
+  path: <span class="string">'comments'</span>,
+  populate: { path: <span class="string">'user'</span>, select: <span class="string">'name'</span> }
+});</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">9</span>
+        <span class="q-text">Mongoose Middleware (Hooks)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="comment">// PRE save — hash password before saving</span>
+userSchema.pre(<span class="string">'save'</span>, <span class="keyword">async function</span>(next) {
+  <span class="keyword">if</span> (<span class="keyword">this</span>.isModified(<span class="string">'password'</span>)) {
+    <span class="keyword">this</span>.password = <span class="keyword">await</span> bcrypt.hash(<span class="keyword">this</span>.password, 10);
+  }
+  next();
+});
+
+<span class="comment">// PRE find — auto-filter</span>
+userSchema.pre(<span class="string">'find'</span>, <span class="keyword">function</span>() {
+  <span class="keyword">this</span>.where({ isActive: <span class="keyword">true</span> });
+});
+
+<span class="comment">// POST save — runs after</span>
+userSchema.post(<span class="string">'save'</span>, <span class="keyword">function</span>(doc) {
+  console.log(<span class="string">`User ${doc.name} saved`</span>);
+});</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">10</span>
+        <span class="q-text">Transactions</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+        <p>Multi-document ACID transactions (MongoDB 4.0+). Must succeed or fail together.</p>
+<pre><span class="keyword">const</span> session = <span class="keyword">await</span> mongoose.startSession();
+session.startTransaction();
+<span class="keyword">try</span> {
+  <span class="keyword">await</span> Account.updateOne(
+    { _id: sender }, { $inc: { balance: -100 } }, { session });
+  <span class="keyword">await</span> Account.updateOne(
+    { _id: receiver }, { $inc: { balance: 100 } }, { session });
+  <span class="keyword">await</span> session.commitTransaction();
+} <span class="keyword">catch</span> {
+  <span class="keyword">await</span> session.abortTransaction();
+} <span class="keyword">finally</span> { session.endSession(); }</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">11</span>
+        <span class="q-text">lean() Queries</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="comment">// Normal — Mongoose documents (with .save(), methods)</span>
+<span class="keyword">await</span> User.find();
+
+<span class="comment">// Lean — plain JS objects (2-5x faster, no methods)</span>
+<span class="keyword">await</span> User.find().lean();</pre>
+        <p>Use <strong>lean()</strong> for read-only/API responses. Don't use when you need .save() or virtuals.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-question" onclick="toggle(this)">
+        <span class="q-num">12</span>
+        <span class="q-text">Duplicate Key Error (11000)</span>
+        <span class="q-toggle">&#9660;</span>
+      </div>
+      <div class="qa-answer">
+<pre><span class="keyword">try</span> {
+  <span class="keyword">await</span> User.create({ email: <span class="string">"existing@test.com"</span> });
+} <span class="keyword">catch</span> (err) {
+  <span class="keyword">if</span> (err.code === <span class="num">11000</span>) {
+    <span class="keyword">const</span> field = Object.keys(err.keyPattern)[0];
+    res.status(409).json({ error: <span class="string">`${field} already exists`</span> });
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== RAPID FIRE ========== -->
+  <div class="section-trick" id="trick">
+    <div class="section-header">
+      <h2>Rapid-Fire Trick Questions <span class="badge">MEMORIZE THESE</span></h2>
+    </div>
+
+    <table class="trick-table">
+      <tr><th>Question</th><th>Answer</th><th>Why</th></tr>
+      <tr><td><code>typeof null</code></td><td><code>"object"</code></td><td>Famous JS bug since 1995</td></tr>
+      <tr><td><code>typeof NaN</code></td><td><code>"number"</code></td><td>NaN is technically a number type</td></tr>
+      <tr><td><code>NaN === NaN</code></td><td><code>false</code></td><td>NaN is not equal to anything</td></tr>
+      <tr><td><code>[] == ![]</code></td><td><code>true</code></td><td>Both coerce to 0</td></tr>
+      <tr><td><code>null == undefined</code></td><td><code>true</code></td><td>Special loose equality rule</td></tr>
+      <tr><td><code>null === undefined</code></td><td><code>false</code></td><td>Different types</td></tr>
+      <tr><td><code>"5" + 3</code></td><td><code>"53"</code></td><td>+ with string = concat</td></tr>
+      <tr><td><code>"5" - 3</code></td><td><code>2</code></td><td>- always does numeric</td></tr>
+      <tr><td>Max MongoDB doc size?</td><td>16MB</td><td>BSON document limit</td></tr>
+      <tr><td>Default MongoDB port?</td><td>27017</td><td></td></tr>
+      <tr><td>PUT vs PATCH?</td><td>PUT = replace, PATCH = partial</td><td></td></tr>
+      <tr><td>401 vs 403?</td><td>401 = not authenticated, 403 = no permission</td><td></td></tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p class="big">You've Got This, Azad!</p>
+  <p>Stay calm, think before you speak, explain your reasoning, and mention real project examples.</p>
+  <p style="margin-top:15px; font-size:0.85em;">MERN Interview Warm-Up &bull; March 23, 2026</p>
+</div>
+
+<script>
+  function toggle(el) {
+    el.parentElement.classList.toggle('open');
+  }
+
+  let allOpen = false;
+  function toggleAll() {
+    allOpen = !allOpen;
+    document.querySelectorAll('.qa-card').forEach(card => {
+      if (allOpen) card.classList.add('open');
+      else card.classList.remove('open');
+    });
+  }
+
+  document.querySelectorAll('.toc-card').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
